@@ -1,0 +1,11 @@
+LEVELS[62] = { id:62, title:"终极任务：发射控制系统", phase:"综合实战", icon:"🚀",
+  briefing: { narrative:"大地在脚下轰鸣。所有系统已经就绪——但发射不是按一个按钮那么简单。你需要亲自编写发射控制程序：验证授权、检查所有子系统、计算燃料、运行倒计时。这是整个旅程的最终考验。外星人最后的信号在屏幕上跳动：【去吧。替我们看看星空。】", objective:"综合运用全部知识——<code>input()</code>、<code>if</code>、<code>dict</code>、<code>for</code>、<code>def</code>、<code>f-string</code>——编写完整的<strong>发射控制系统</strong>。", tip:"这是你62关旅程的终点。写出你最好的代码。" },
+  knowledge: { concept:"综合实战：发射控制系统", intro:"回顾62关学到的所有核心技能：<br>• <code>input()</code> — 获取用户输入<br>• <code>if/elif/else</code> — 条件判断<br>• <code>dict</code> — 存储子系统状态<br>• <code>for</code> — 遍历检查<br>• <code>def</code> — 封装计算函数<br>• <code>f-string</code> — 格式化输出<br>• <code>try/except</code> — 异常保护", example:"# 示例：系统检查模板\nsystems = {\"引擎\": 95, \"导航\": 82}\nfor name, val in systems.items():\n    if val >= 80:\n        print(f\"{name}: 正常\")\n    elif val >= 50:\n        print(f\"{name}: 警告\")\n    else:\n        print(f\"{name}: 危险\")", exampleOutput:"引擎: 正常\n导航: 正常", rules:[{title:"检查清单",text:"✅ input获取授权码 ✅ if验证 ✅ dict存系统 ✅ for循环检查 ✅ def定义函数 ✅ f-string格式化 ✅ for倒数 ✅ 打印报告"}], watchOut:"input()返回的是字符串！与授权码比较时注意大小写和空格。燃料计算确保用对公式。" },
+  story:"编写完整的发射控制程序。<br><br><strong>要求（按顺序）：</strong><br>① 用 <code>input()</code> 获取发射授权码（正确码：<code>IGNITION-FINAL</code>），用 <code>if</code> 验证，错误则打印\"授权失败\"并结束<br>② 创建 <code>dict</code> 存储5个子系统：<code>{\"生命维持\":85, \"导航\":92, \"通讯\":68, \"推进器\":95, \"护盾\":55}</code><br>③ 用 <code>for</code> 循环遍历，<code>if/elif/else</code> 判断：>=80→\"正常\"、>=50→\"警告\"、<50→\"危险\"。统计危险系统数量，如有危险则打印\"系统故障，发射中止\"并结束<br>④ 定义函数 <code>calc_fuel(distance, rate=10)</code>，返回 <code>distance * rate</code><br>⑤ 设 <code>fuel_reserve = 5000</code>、<code>distance = 380</code>，调用函数计算所需燃料，<code>if</code> 判断储备是否足够，不够则打印\"燃料不足\"并结束<br>⑥ 用 <code>for i in range(10, 0, -1)</code> 倒数，倒数到3时打印 <code>\"去吧。替我们看看星空。\"</code><br>⑦ 最后打印 <code>\"发射成功！\"</code><br>⑧ 关键操作（如int转换、除法）用 <code>try/except</code> 保护",
+  starterCode:`# 在这里写你的代码
+`,
+  testCases:[{stdin:'IGNITION-FINAL',expected:'生命维持: 85 → 正常\n导航: 92 → 正常\n通讯: 68 → 警告\n推进器: 95 → 正常\n护盾: 55 → 警告\n10\n9\n8\n7\n6\n5\n4\n3\n去吧。替我们看看星空。\n2\n1\n发射成功！'}],
+  hint:"按顺序来：先input获取授权码→if验证→dict存数据→for循环检查→def定义函数→if判断燃料→for倒数→print报告。每步单独测试，确保前一步正确再写下一步。",
+  achievement:{id:"py_master",icon:"🚀",name:"重返星空"},
+  practice:true
+};

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🚀 星际求生 · 代码初学闯关</title>
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+</head>
+<body>
+
+<!-- Starfield background -->
+<div class="stars" id="stars"></div>
+
+<!-- App container -->
+<div class="app-container">
+
+  <!-- ===== VIEW: LOGIN ===== -->
+  <div class="view active" id="view-login">
+    <div class="login-title">🚀 星际求生</div>
+    <p class="login-subtitle">飞船迫降未知星球。选择一个身份，开始修复之旅。</p>
+
+    <div class="login-panel">
+      <label for="username-input">👤 创建新飞行员档案</label>
+      <div class="login-input-row">
+        <input type="text" class="login-input" id="username-input"
+               placeholder="输入你的名字..." maxlength="12"
+               onkeydown="if(event.key==='Enter')createUser()">
+        <button class="btn btn-primary" onclick="createUser()">开始 →</button>
+      </div>
+    </div>
+
+    <div class="existing-users" id="existing-users">
+      <h4>📂 已有档案</h4>
+      <div id="user-list"></div>
+    </div>
+  </div>
+
+  <!-- ===== VIEW: HOME ===== -->
+  <div class="view" id="view-home">
+    <div class="home-title">🚀 星际求生</div>
+    <p class="home-subtitle">飞船迫降未知星球。用代码修复系统，重返太空。<br><span id="home-username" style="color:var(--text-muted);"></span></p>
+    <div class="track-cards">
+      <div class="track-card" onclick="selectTrack('python')">
+        <span class="icon">🐍</span>
+        <h3>Python · 主控电脑</h3>
+        <p>修复生命维持、导航与通讯系统</p>
+        <p style="margin-top:12px;color:var(--text-muted);font-size:12px;">62关渐进式学习</p>
+      </div>
+      <div class="track-card" style="opacity:0.5;cursor:not-allowed;" title="后续开放">
+        <span class="icon">⚙️</span>
+        <h3>C 语言 · 引擎系统</h3>
+        <p>修复底层控制、传感器与推进器</p>
+        <p style="margin-top:12px;color:var(--text-muted);font-size:12px;">即将开放</p>
+      </div>
+    </div>
+    <p style="margin-top:20px;">
+      <button class="btn btn-ghost btn-sm" onclick="switchUser()">🔄 切换用户</button>
+    </p>
+  </div>
+
+  <!-- ===== VIEW: MAP ===== -->
+  <div class="view" id="view-map">
+    <div class="map-header">
+      <button class="btn btn-ghost btn-sm" onclick="goHome()">← 返回基地</button>
+      <span class="map-title">🐍 主控电脑修复 · 任务地图</span>
+      <span style="font-size:13px;color:var(--text-muted);" id="map-progress">0/62</span>
+    </div>
+    <div class="level-grid" id="level-grid"></div>
+  </div>
+
+  <!-- ===== VIEW: CHALLENGE ===== -->
+  <div class="view" id="view-challenge">
+    <div class="challenge-layout">
+      <!-- Level title -->
+      <div class="level-title-bar" id="level-title-bar">
+        <span class="level-num" id="level-num"></span>
+        <h1 class="level-heading" id="level-heading"></h1>
+      </div>
+
+      <!-- Knowledge panel -->
+      <div class="knowledge-panel" id="knowledge-panel">
+        <div class="knowledge-header">
+          <span class="kn-badge">📖 新知识</span>
+          <span class="kn-title" id="kn-title">标题</span>
+          <span style="font-size:12px;color:var(--text-muted);" id="kn-phase"></span>
+          <button class="kn-toggle" id="kn-toggle" onclick="toggleKnowledge()" title="收起/展开">▼</button>
+        </div>
+        <div class="knowledge-body" id="knowledge-body"></div>
+      </div>
+
+      <!-- Story reminder -->
+      <div class="challenge-story" id="challenge-story" style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;font-size:15px;color:var(--text-primary);font-weight:600;"></div>
+
+      <!-- Editor + Terminal (vertical stack) -->
+      <div class="challenge-editor-terminal">
+      <!-- Code editor -->
+      <div class="challenge-editor">
+        <div class="editor-header">
+          <span>📝 <span id="editor-filename">main.py</span></span>
+          <span class="lang-tag">Python</span>
+        </div>
+        <div class="editor-body">
+          <div class="line-numbers" id="line-numbers"></div>
+          <textarea id="code-editor" placeholder="在这里写代码..." spellcheck="false"></textarea>
+        </div>
+      </div>
+
+      <!-- Terminal -->
+      <div class="challenge-terminal">
+        <div class="terminal-header">
+          <span class="terminal-dot red"></span>
+          <span class="terminal-dot yellow"></span>
+          <span class="terminal-dot green"></span>
+          <span>终端 · 飞船主控电脑</span>
+        </div>
+        <div class="terminal-body" id="terminal-body">
+          <span class="info">等待代码执行...</span>
+        </div>
+      </div>
+
+      <!-- Chinese punctuation warning -->
+      <div class="cn-warning" id="cn-warning">
+        <span>⚠️</span>
+        <span id="cn-warning-text"></span>
+      </div>
+
+      <!-- Actions -->
+      <div class="challenge-actions">
+        <button class="btn btn-ghost btn-sm" onclick="goMap()">← 返回任务地图</button>
+        <span class="spacer"></span>
+        <span class="py-status loading" id="py-status">
+          <span class="py-spinner"></span> Python 环境加载中...
+        </span>
+        <button class="btn btn-ghost btn-sm" id="hint-btn" onclick="showHint()">💡 思路引导</button>
+        <button class="btn btn-success btn-lg" id="run-btn" onclick="runCode()" disabled>▶ 运行代码</button>
+      </div>
+      </div><!-- /challenge-editor-terminal -->
+    </div>
+
+    <!-- Hint text -->
+    <div class="hint-area" id="hint-area">
+      <span class="hint-text" id="hint-text">需要提示吗？点击「💡 思路引导」</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- Mission Briefing overlay -->
+<div class="briefing-overlay" id="overlay-briefing" style="display:none;" onclick="closeBriefing()">
+  <div class="briefing-card" onclick="event.stopPropagation()">
+    <button class="briefing-close" onclick="closeBriefing()" title="关闭">✕</button>
+    <div class="scanline"></div>
+    <div class="briefing-top">
+      <span class="mission-tag" id="briefing-tag">⚠ 任务简报</span>
+      <span class="mission-icon" id="briefing-icon">📋</span>
+      <h2 id="briefing-title">任务名称</h2>
+      <span class="mission-subtitle" id="briefing-subtitle"></span>
+    </div>
+    <div class="briefing-body" id="briefing-body"></div>
+    <div class="briefing-actions">
+      <button class="btn btn-primary btn-start" onclick="dismissBriefing()">▶ 接受任务</button>
+    </div>
+  </div>
+</div>
+
+<!-- Achievement overlay -->
+<div class="overlay" id="overlay-achievement" style="display:none;" onclick="closeAchievement()">
+  <div class="achievement-card" onclick="event.stopPropagation()">
+    <span class="ach-icon" id="ach-icon"></span>
+    <div class="ach-label">🏆 成就解锁</div>
+    <h2 id="ach-name"></h2>
+    <button class="btn btn-primary" onclick="closeAchievement()">继续任务 →</button>
+  </div>
+</div>
+
+<!-- JS: Core modules (order matters) -->
+<script src="js/storage.js"></script>
+<script src="js/runner.js"></script>
+<script src="js/ui.js"></script>
+<!-- JS: Level data -->
+<script src="js/levels/level-01.js"></script>
+<script src="js/levels/level-02.js"></script>
+<script src="js/levels/level-03.js"></script>
+<script src="js/levels/level-04.js"></script>
+<script src="js/levels/level-05.js"></script>
+<script src="js/levels/level-06.js"></script>
+<script src="js/levels/level-07.js"></script>
+<script src="js/levels/level-08.js"></script>
+<script src="js/levels/level-09.js"></script>
+<script src="js/levels/level-10.js"></script>
+<script src="js/levels/level-11.js"></script>
+<script src="js/levels/level-12.js"></script>
+<script src="js/levels/level-13.js"></script>
+<script src="js/levels/level-14.js"></script>
+<script src="js/levels/level-15.js"></script>
+<script src="js/levels/level-16.js"></script>
+<script src="js/levels/level-17.js"></script>
+<script src="js/levels/level-18.js"></script>
+<script src="js/levels/level-19.js"></script>
+<script src="js/levels/level-20.js"></script>
+<script src="js/levels/level-21.js"></script>
+<script src="js/levels/level-22.js"></script>
+<script src="js/levels/level-23.js"></script>
+<script src="js/levels/level-24.js"></script>
+<script src="js/levels/level-25.js"></script>
+<script src="js/levels/level-26.js"></script>
+<script src="js/levels/level-27.js"></script>
+<script src="js/levels/level-28.js"></script>
+<script src="js/levels/level-29.js"></script>
+<script src="js/levels/level-30.js"></script>
+<script src="js/levels/level-31.js"></script>
+<script src="js/levels/level-32.js"></script>
+<script src="js/levels/level-33.js"></script>
+<script src="js/levels/level-34.js"></script>
+<script src="js/levels/level-35.js"></script>
+<script src="js/levels/level-36.js"></script>
+<script src="js/levels/level-37.js"></script>
+<script src="js/levels/level-38.js"></script>
+<script src="js/levels/level-39.js"></script>
+<script src="js/levels/level-40.js"></script>
+<script src="js/levels/level-41.js"></script>
+<script src="js/levels/level-42.js"></script>
+<script src="js/levels/level-43.js"></script>
+<script src="js/levels/level-44.js"></script>
+<script src="js/levels/level-45.js"></script>
+<script src="js/levels/level-46.js"></script>
+<script src="js/levels/level-47.js"></script>
+<script src="js/levels/level-48.js"></script>
+<script src="js/levels/level-49.js"></script>
+<script src="js/levels/level-50.js"></script>
+<script src="js/levels/level-51.js"></script>
+<script src="js/levels/level-52.js"></script>
+<script src="js/levels/level-53.js"></script>
+<script src="js/levels/level-54.js"></script>
+<script src="js/levels/level-55.js"></script>
+<script src="js/levels/level-56.js"></script>
+<script src="js/levels/level-57.js"></script>
+<script src="js/levels/level-58.js"></script>
+<script src="js/levels/level-59.js"></script>
+<script src="js/levels/level-60.js"></script>
+<script src="js/levels/level-61.js"></script>
+<script src="js/levels/level-62.js"></script>
+<!-- JS: App init (must be last) -->
+<script src="js/app.js"></script>
+
+</body>
+</html>
