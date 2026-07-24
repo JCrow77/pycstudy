@@ -161,15 +161,18 @@ builtins.input = input
           }
           saveProgress();
 
+          // Show completion feedback
+          terminal.innerHTML = termHTML;
+          terminal.scrollTop = terminal.scrollHeight;
+          await sleep(600);
           if (level.achievement) {
-            terminal.innerHTML = termHTML;
-            terminal.scrollTop = terminal.scrollHeight;
-            await sleep(800);
             showAchievement(level.achievement);
-            runBtn.disabled = false;
-            runBtn.textContent = '▶ 运行代码';
-            return;
+          } else {
+            showTaskComplete();
           }
+          runBtn.disabled = false;
+          runBtn.textContent = '▶ 运行代码';
+          return;
         }
       } else {
         termHTML += `<span>${escapeHtml(output) || '(无输出)'}</span>\n`;

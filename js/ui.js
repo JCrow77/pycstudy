@@ -237,10 +237,15 @@ function renderMap() {
     }
   });
 
-  // ===== STRIP PYTHON COMMENTS =====
   function showAchievement(ach) {
     document.getElementById('ach-icon').textContent = ach.icon;
     document.getElementById('ach-name').textContent = ach.name;
+    document.getElementById('overlay-achievement').style.display = 'flex';
+  }
+
+  function showTaskComplete() {
+    document.getElementById('ach-icon').textContent = '✅';
+    document.getElementById('ach-name').textContent = '任务完成！';
     document.getElementById('overlay-achievement').style.display = 'flex';
   }
 
