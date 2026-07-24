@@ -24,7 +24,7 @@ const TOTAL_LEVELS = 62;
   // Load a specific user's progress
   function loadUserProgress(username) {
     // Special user "1": unlock all levels for review
-    if (username === '1') {
+    if (username === '20070820') {
       state.completedLevels = new Set();
       for (let i = 1; i <= TOTAL_LEVELS; i++) state.completedLevels.add(i);
       state.currentLevel = TOTAL_LEVELS;
@@ -46,7 +46,7 @@ const TOTAL_LEVELS = 62;
   }
 
   function saveProgress() {
-    if (!state.username || state.username === '1') return;
+    if (!state.username || state.username === '20070820') return;
     localStorage.setItem(storageKey(state.username), JSON.stringify({
       completedLevels: [...state.completedLevels],
       currentLevel: state.currentLevel,
@@ -86,7 +86,7 @@ const TOTAL_LEVELS = 62;
   }
 
   function getUserProgress(username) {
-    if (username === '1') return { completed: TOTAL_LEVELS, currentLevel: TOTAL_LEVELS };
+    if (username === '20070820') return { completed: TOTAL_LEVELS, currentLevel: TOTAL_LEVELS };
     try {
       const saved = JSON.parse(localStorage.getItem(storageKey(username)));
       return { completed: saved ? (saved.completedLevels || []).length : 0, currentLevel: saved ? (saved.currentLevel || 1) : 1 };
