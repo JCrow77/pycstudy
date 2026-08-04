@@ -115,8 +115,8 @@
 
       // Prepare stdin by overriding input()
       let stdout = '';
-      pyodide.setStdout({ batched: (text) => { stdout += text + '\n'; } });
-      pyodide.setStderr({ batched: (text) => { stdout += text + '\n'; } });
+      pyodide.setStdout({ batched: (text) => { stdout += text; } });
+      pyodide.setStderr({ batched: (text) => { stdout += text; } });
 
       // Handle input() by pre-seeding stdin
       const stdinLines = (testCase.stdin || '').split('\n');
