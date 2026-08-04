@@ -5,7 +5,7 @@ LEVELS[26] = { id:26, title:"条件判断实战②：故障逻辑修复", phase:
   starterCode:`temp = 25
 fuel = 82
 
-# 下面代码有5个逻辑bug，修正它们使其输出"系统正常"
+# 下面代码有5个逻辑bug，找出并修正它们
 if temp < 40:
     print("温度过高")
 if fuel > 80:
@@ -18,7 +18,7 @@ elif temp > 50:
 if temp > 20 or fuel > 60:
     print("系统正常")
 `,
-  testCases:[{stdin:'',expected:'系统正常'}],
+  testCases:[{stdin:'',expected:'燃料充足\n系统正常'}],
   hint:"逐一检查：temp<40方向反了、第二个if应是elif、fuel<50漏了=、死分支需调顺序、or应改为and。",
   practice:true
 };

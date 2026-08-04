@@ -124,16 +124,15 @@ sys.stdout = _captured
 sys.stderr = _captured
 `);
 
-      // Handle input() by pre-seeding stdin
+      // Handle input() — always override to prevent hangs on empty stdin
       const stdinLines = (testCase.stdin || '').split('\n');
-      if (stdinLines.length > 0 && stdinLines[0] !== '') {
-        await pyodide.runPythonAsync(`
+      const hasStdin = stdinLines.length > 0 && stdinLines[0] !== '';
+      await pyodide.runPythonAsync(`
 import builtins
-_stdin_data = ${JSON.stringify(stdinLines)}
+_stdin_data = ${JSON.stringify(hasStdin ? stdinLines : [''])}
 _stdin_iter = iter(_stdin_data)
 builtins.input = lambda prompt='': next(_stdin_iter)
 `);
-      }
 
       // Run the user's code
       await pyodide.runPythonAsync(code);
@@ -147,17 +146,15 @@ _captured.getvalue()
       const output = (rawOutput || '').replace(/\r\n/g, '\n').replace(/\r/g, '').trim();
 
       // Restore input
-      if (stdinLines.length > 0 && stdinLines[0] !== '') {
-        await pyodide.runPythonAsync(`
+      await pyodide.runPythonAsync(`
 import builtins
 builtins.input = input
 `);
-      }
 
       // Build terminal output
       let termHTML = '<span class="prompt">$ python main.py</span>\n';
 
-      if (output === testCase.expected || output.includes(testCase.expected)) {
+      if (output === testCase.expected) {
         termHTML += `<span>${escapeHtml(output)}</span>\n`;
         termHTML += `<span class="success">━━━━━━━━━━━━━━━━━━━━</span>\n`;
         termHTML += `<span class="success">✅ 任务完成！测试通过。</span>`;
