@@ -5,6 +5,6 @@ LEVELS[59] = { id:59, title:"综合项目③：物资管理系统", phase:"综�
   starterCode:`# 在这里写你的代码
 `,
   testCases:[{stdin:'',expected:'找到: 外星文物, 重量: 47kg\\n当前物资清单:\\n  水: 50kg\\n  食物: 30kg\\n  氧气罐: 80kg\\n  外星文物: 47kg\\n  急救包: 15kg\\n总重量: 222kg'}],
-  hint:"代码已预填。运行观察物资管理系统的完整流程。",
+  hint:"items列表已预填。定义4个函数：add_item用append、search_item用for循环匹配、remove_low_priority用列表推导式过滤、calc_total_weight用sum。",
   practice:true
 };

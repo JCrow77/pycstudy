@@ -4,7 +4,7 @@ LEVELS[18] = { id:18, title:"小综合①：生存数据仪表盘", phase:"类�
   story:"综合运用学到的类型知识，生成一份格式化环境报告。<br><br>要求：<br>① 用 <code>input()</code> 依次接收三个值：<strong>温度</strong>（浮点数）、<strong>气压</strong>（整数）、<strong>辐射</strong>（浮点数）<br>② 用 <code>float()</code> 和 <code>int()</code> 转换类型<br>③ 用 <code>f-string</code> 格式化输出，辐射值保留1位小数<br>④ 输出格式：<br>🌡️ 温度: XX°C<br>📊 气压: XX hPa<br>☢️ 辐射: XX μSv/h",
   starterCode:`# 在这里写你的代码
 `,
-  testCases:[{stdin:'',expected:"温度: 36.5°C\n气压: 1013 hPa\n辐射: 0.8 mSv"}],
+  testCases:[{stdin:'36.5\n1013\n0.8',expected:'温度: 36.5°C\n气压: 1013 hPa\n辐射: 0.8 mSv'}],
   hint:"分别用 raw1 = input(\"温度: \") 等获取三个输入。temp = float(raw1)、pressure = int(raw2)、rad = float(raw3) 转换类型。最后用 f-string 输出，辐射写 {rad:.1f}。",
   practice:true
 };

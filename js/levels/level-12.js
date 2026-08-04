@@ -4,6 +4,6 @@ LEVELS[12] = { id:12, title:"小心！input() 的陷阱", phase:"变量与基本
   story:"用 input() 获取用户输入的氧气浓度，注意类型转换陷阱。<br><br>要求：<br>① 用 <code>input(\"请输入氧气浓度: \")</code> 获取输入（返回的是字符串！）<br>② 用 <code>int()</code> 将输入的字符串转为整数<br>③ 将转换后的值加 5<br>④ 打印结果，格式：<code>补给后氧气浓度: XX</code><br><br>测试输入为：<code>21</code>",
   starterCode:`# 在这里写你的代码
 `,
-  testCases:[{stdin:'',expected:'补给后氧气浓度: 26'}],
+  testCases:[{stdin:'21',expected:'补给后氧气浓度: 26'}],
   hint:"先写 raw = input(\"请输入氧气浓度: \") 获取字符串输入。再写 oxygen = int(raw) 转成整数。最后打印 oxygen + 5，用 f-string 或逗号拼接输出文字和结果。"
 };
