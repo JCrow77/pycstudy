@@ -113,10 +113,14 @@
     try {
       const testCase = level.testCases[0];
 
-      // Prepare stdin by overriding input()
-      let stdout = '';
-      pyodide.setStdout({ batched: (text) => { stdout += text; } });
-      pyodide.setStderr({ batched: (text) => { stdout += text; } });
+      // Capture stdout/stderr using Python's StringIO (more reliable than Pyodide callbacks)
+      await pyodide.runPythonAsync(`
+import sys
+from io import StringIO
+_captured = StringIO()
+sys.stdout = _captured
+sys.stderr = _captured
+`);
 
       // Handle input() by pre-seeding stdin
       const stdinLines = (testCase.stdin || '').split('\n');
@@ -131,19 +135,21 @@ builtins.input = lambda prompt='': next(_stdin_iter)
 
       // Run the user's code
       await pyodide.runPythonAsync(code);
-      const output = stdout.replace(/\r\n/g, '\n').replace(/\r/g, '').trim();
 
-      // Reset stdout/stderr
-      pyodide.setStdout({ batched: () => {} });
-      pyodide.setStderr({ batched: () => {} });
+      // Get captured output
+      const rawOutput = await pyodide.runPythonAsync(`
+import sys
+sys.stdout = sys.__stdout__
+_captured.getvalue()
+`);
+      const output = (rawOutput || '').replace(/\r\n/g, '\n').replace(/\r/g, '').trim();
 
-      // Also reset input if we overrode it
+      // Restore input
       if (stdinLines.length > 0 && stdinLines[0] !== '') {
         await pyodide.runPythonAsync(`
 import builtins
 builtins.input = input
 `);
-        // Hmm this doesn't properly restore. Let me just use a fresh approach each time.
       }
 
       // Build terminal output
