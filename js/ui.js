@@ -217,8 +217,8 @@ function renderMap() {
   document.getElementById('code-editor').addEventListener('input', function() {
     updateLineNumbers();
     // Detect Chinese punctuation in code only (skip comments)
-    const codeOnly = stripComments(this.value);
-    const found = detectCNPunctuation(codeOnly);
+    const syntaxOnly = codeOnly(this.value);
+    const found = detectCNPunctuation(syntaxOnly);
     showCNWarning(found);
   });
   document.getElementById('code-editor').addEventListener('scroll', function() {

@@ -35,31 +35,33 @@
 
   // (loadState removed — replaced by loadUserProgress above)
 
-  // ===== LEVEL DATA =====
-  function stripComments(code) {
-    const lines = code.split('\n');
-    return lines.map(line => {
-      let inString = false;
-      let stringChar = null;
-      let result = '';
-      for (let i = 0; i < line.length; i++) {
-        const ch = line[i];
-        if (!inString && (ch === '"' || ch === "'")) {
-          inString = true;
-          stringChar = ch;
-          result += ch;
-        } else if (inString && ch === stringChar && line[i-1] !== '\\') {
-          inString = false;
-          stringChar = null;
-          result += ch;
-        } else if (!inString && ch === '#') {
-          break;
-        } else {
-          result += ch;
-        }
+  // Strip comments AND string contents, leaving only code syntax to check
+  function codeOnly(text) {
+    let inString = false;
+    let stringChar = null;
+    let result = '';
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      // Detect string boundaries
+      if (!inString && (ch === '"' || ch === "'")) {
+        inString = true;
+        stringChar = ch;
+        result += ch; // keep the opening quote
+      } else if (inString && ch === stringChar && text[i-1] !== '\\') {
+        inString = false;
+        stringChar = null;
+        result += ch; // keep the closing quote
+      } else if (inString) {
+        result += ' '; // replace string content with spaces
+      } else if (ch === '#') {
+        // Comment starts — skip rest of line
+        while (i < text.length && text[i] !== '\n') i++;
+        if (i < text.length) result += '\n';
+      } else {
+        result += ch;
       }
-      return result;
-    }).join('\n');
+    }
+    return result;
   }
 
   // ===== PYODIDE ENGINE =====
@@ -90,9 +92,9 @@
     const terminal = document.getElementById('terminal-body');
     const runBtn = document.getElementById('run-btn');
 
-    // Check for Chinese punctuation (only in non-comment code)
-    const codeOnly = stripComments(code);
-    const cnIssues = detectCNPunctuation(codeOnly);
+    // Check for Chinese punctuation (only in code syntax, not inside strings)
+    const syntaxOnly = codeOnly(code);
+    const cnIssues = detectCNPunctuation(syntaxOnly);
     if (cnIssues.length > 0) {
       const chars = cnIssues.map(f => f.char).join('、');
       terminal.innerHTML = `<span class="prompt">$ python main.py</span>
