@@ -131,7 +131,7 @@ builtins.input = lambda prompt='': next(_stdin_iter)
 
       // Run the user's code
       await pyodide.runPythonAsync(code);
-      const output = stdout.trim();
+      const output = stdout.replace(/\r\n/g, '\n').replace(/\r/g, '').trim();
 
       // Reset stdout/stderr
       pyodide.setStdout({ batched: () => {} });
