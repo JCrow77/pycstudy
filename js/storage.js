@@ -54,8 +54,6 @@ const TOTAL_LEVELS = 62;
   }
 
   // ===== GAME STATE =====
-
-  // ===== CHINESE PUNCTUATION DETECTION =====
   function renderLogin() {
     const users = getUsers();
     const listEl = document.getElementById('user-list');

@@ -115,7 +115,7 @@
     try {
       const testCase = level.testCases[0];
       // Normalize expected: convert literal \n (backslash-n in single-quoted strings) to real newlines
-      const expected = (testCase.expected || '').replace(/\\n/g, '\n');
+      const expected = (testCase.expected || '').replace(/\\n/g, '\n').trim();
 
       // Capture stdout/stderr using Python's StringIO (more reliable than Pyodide callbacks)
       await pyodide.runPythonAsync(`
@@ -164,7 +164,7 @@ builtins.input = input
         if (!state.completedLevels.has(state.currentLevel)) {
           state.completedLevels.add(state.currentLevel);
           if (state.currentLevel < TOTAL_LEVELS) {
-            state.currentLevel = Math.max(state.currentLevel, state.currentLevel + 1);
+            state.currentLevel = state.currentLevel + 1;
           }
           saveProgress();
 

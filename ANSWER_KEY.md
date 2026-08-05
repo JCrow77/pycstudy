@@ -232,13 +232,13 @@ else:
 ```python
 oxygen = 16
 if oxygen >= 20:
-    print("优良")
+    print("氧气优良")
 elif oxygen >= 18:
-    print("正常")
+    print("氧气正常")
 elif oxygen >= 15:
-    print("偏低")
+    print("氧气偏低")
 else:
-    print("危险")
+    print("氧气危险")
 ```
 
 ---
@@ -685,12 +685,17 @@ print(f"取整: {math.ceil(v)}")
 ## 第54关：混沌之美：random 模块实战
 
 ```python
-import random as r
-print(f"传感器读数: {r.randint(1,100)}")
-print(f"天气: {r.choice(['晴天','风暴','辐射','平静'])}")
-for i in range(1,6):
-    x = r.random()
-    print(f"第{i}次: {'门开了' if 0.3<x<0.7 else '门关着'}")
+import random
+random.seed(42)
+print(f"传感器读数: {random.randint(1, 100)}")
+print(f"天气: {random.choice(["晴天", "风暴", "辐射", "平静"])}")
+print("概率之门测试:")
+for i in range(1, 6):
+    r = random.random()
+    if 0.3 < r < 0.7:
+        print(f"第{i}次: 门开了")
+    else:
+        print(f"第{i}次: 门关着")
 ```
 
 ---
@@ -704,13 +709,13 @@ print("温度: " + str(36.5))
 try:
     print(int("abc123"))
 except ValueError:
-    print(0)
+    print("无法转换")
 print({"name":"星舟"}.get("age","星舟"))
 nums = [1,2,3]
 try:
     print(nums[10])
 except IndexError:
-    print(nums[2])
+    print("索引越界")
 ```
 
 > 🏆 成就：调试专家
@@ -736,7 +741,7 @@ except IndexError:
 
 ---
 
-## 第57关：综合项目①：生存天数计算器
+## 第57关：综合项目：生存天数计算器
 
 ```python
 o = 1200/50
@@ -748,7 +753,7 @@ print(f"氧气: {o:.0f}天")
 print(f"食物: {f:.0f}天")
 print(f"水: {w:.0f}天")
 print(f"燃料: {fu:.0f}天")
-print(f"-> 最多生存 {min(d):.0f} 天")
+print(f"最短生存: {min(d):.0f}天")
 ```
 
 ---
@@ -781,7 +786,8 @@ def remove_low(t):
 def total(): return sum(i["weight"] for i in items)
 add("急救包",15,1)
 r=search("外星文物")
-print(f"找到: {r["name"]}, 重量: {r["weight"]}kg")
+n = r["name"]; w = r["weight"]
+print(f"找到: {n}, 重量: {w}kg")
 remove_low(2)
 print("当前物资清单:")
 for i in items: print(f"  {i["name"]}: {i["weight"]}kg")
@@ -814,6 +820,7 @@ for t in range(10):
 
 ```python
 import random
+random.seed(42)
 s={"氧气":lambda:random.random()>0.2,"温度":lambda:random.random()>0.3,"燃料":lambda:random.random()>0.1,"通讯":lambda:random.random()>0.4,"护盾":lambda:random.random()>0.5}
 f=0
 for n,t in s.items():
@@ -827,15 +834,39 @@ print("发射中止" if f>2 else "所有系统正常，准备发射")
 
 ---
 
-## 第62关：终极任务：重返太空
+## 第62关：终极任务：发射控制系统
 
 ```python
-for i in range(10,0,-1):
-    print(f"T-{i}: 系统正常")
-    if i==3: print("去吧。替我们看看星空。")
-print("IGNITION!")
-print("星星一颗颗亮起来...")
-print("你回家了。")
+code = input()
+if code != "IGNITION-FINAL":
+    print("授权失败")
+else:
+    systems = {"生命维持":85,"导航":92,"通讯":68,"推进器":95,"护盾":55}
+    danger = 0
+    for name, val in systems.items():
+        if val >= 80:
+            print(f"{name}: {val} -> 正常")
+        elif val >= 50:
+            print(f"{name}: {val} -> 警告")
+        else:
+            print(f"{name}: {val} -> 危险")
+            danger += 1
+    if danger > 0:
+        print("系统故障，发射中止")
+    else:
+        def calc_fuel(distance, rate=10):
+            return distance * rate
+        fuel_reserve = 5000
+        distance = 380
+        needed = calc_fuel(distance)
+        if fuel_reserve < needed:
+            print("燃料不足")
+        else:
+            for i in range(10,0,-1):
+                print(i)
+                if i == 3:
+                    print("去吧。替我们看看星空。")
+            print("发射成功！")
 ```
 
 > 🏆 成就：重返星空
