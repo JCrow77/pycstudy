@@ -114,6 +114,8 @@
 
     try {
       const testCase = level.testCases[0];
+      // Normalize expected: convert literal \n (backslash-n in single-quoted strings) to real newlines
+      const expected = (testCase.expected || '').replace(/\\n/g, '\n');
 
       // Capture stdout/stderr using Python's StringIO (more reliable than Pyodide callbacks)
       await pyodide.runPythonAsync(`
@@ -154,7 +156,7 @@ builtins.input = input
       // Build terminal output
       let termHTML = '<span class="prompt">$ python main.py</span>\n';
 
-      if (output === testCase.expected) {
+      if (output === expected) {
         termHTML += `<span>${escapeHtml(output)}</span>\n`;
         termHTML += `<span class="success">━━━━━━━━━━━━━━━━━━━━</span>\n`;
         termHTML += `<span class="success">✅ 任务完成！测试通过。</span>`;
@@ -183,7 +185,7 @@ builtins.input = input
         termHTML += `<span>${escapeHtml(output) || '(无输出)'}</span>\n`;
         termHTML += `<span class="error">━━━━━━━━━━━━━━━━━━━━</span>\n`;
         termHTML += `<span class="error">❌ 输出不匹配</span>\n`;
-        termHTML += `<span class="info">期望输出: "${escapeHtml(testCase.expected)}"</span>\n`;
+        termHTML += `<span class="info">期望输出: "${escapeHtml(expected)}"</span>\n`;
         termHTML += `<span class="info">实际输出: "${escapeHtml(output) || '(空)'}"</span>\n`;
         termHTML += `<span class="info">检查输出内容是否完全一致（大小写、空格、标点）。</span>`;
       }
